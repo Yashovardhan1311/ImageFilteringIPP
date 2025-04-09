@@ -12,11 +12,13 @@ st.title("Image Filtering")
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
 
-# Initialize session state for image data
+# Initialize session state
 if "original_image" not in st.session_state:
     st.session_state.original_image = None
 if "filtered_image" not in st.session_state:
     st.session_state.filtered_image = None
+if "current_filter" not in st.session_state:
+    st.session_state.current_filter = None
 
 # Function to adjust image size
 def adjust_image_size(image, max_width=600, max_height=600):
@@ -111,24 +113,48 @@ with col2:
 # Controls
 st.subheader("Controls")
 col_btn1, col_btn2, col_btn3 = st.columns(3)
+
+# Filter buttons with immediate application
 with col_btn1:
     if st.button("Blur"):
         st.session_state.current_filter = "blur"
+        st.session_state.filtered_image = apply_filter(st.session_state.original_image, "blur")
 with col_btn1:
     if st.button("Sharpen"):
         st.session_state.current_filter = "sharpen"
+        st.session_state.filtered_image = apply_filter(st.session_state.original_image, "sharpen")
 with col_btn1:
     if st.button("Invert"):
         st.session_state.current_filter = "invert"
+        st.session_state.filtered_image = apply_filter(st.session_state.original_image, "invert")
 with col_btn2:
     if st.button("Smoothen"):
         st.session_state.current_filter = "smooth"
+        st.session_state.filtered_image = apply_filter(st.session_state.original_image, "smooth")
 with col_btn2:
     if st.button("Grayscale"):
         st.session_state.current_filter = "grayscale"
+        st.session_state.filtered_image = apply_filter(st.session_state.original_image, "grayscale")
 with col_btn2:
     if st.button("Reset Filter"):
         st.session_state.current_filter = None
+        st.session_state.filtered_image = st.session_state.original_image.copy()
+
+# Sliders
+st.subheader("Adjustments")
+intensity = st.slider("Intensity", 0.0, 2.0, 1.0, 0.1)
+brightness = st.slider("Brightness", -100, 100, 0, 1)
+contrast = st.slider("Contrast", 0.0, 2.0, 1.0, 0.1)
+
+# Apply adjustments and filters on slider change
+if st.session_state.original_image is not None:
+    filtered = st.session_state.original_image.copy()
+    if st.session_state.current_filter:
+        filtered = apply_filter(filtered, st.session_state.current_filter)
+    filtered = apply_adjustments(filtered, intensity, brightness, contrast)
+    st.session_state.filtered_image = filtered
+
+# Download button
 with col_btn3:
     if st.button("Download"):
         if st.session_state.filtered_image is not None:
@@ -137,25 +163,12 @@ with col_btn3:
             img.save(buf, format="PNG")
             byte_im = buf.getvalue()
             st.download_button(
-                label="Download Image",
+                label="Download Filtered Image",
                 data=byte_im,
                 file_name="filtered_image.png",
-                mime="image/png"
+                mime="image/png",
+                key="download_btn"
             )
-
-# Sliders
-st.subheader("Adjustments")
-intensity = st.slider("Intensity", 0.0, 2.0, 1.0, 0.1)
-brightness = st.slider("Brightness", -100, 100, 0, 1)
-contrast = st.slider("Contrast", 0.0, 2.0, 1.0, 0.1)
-
-# Apply filters and adjustments
-if st.session_state.original_image is not None:
-    filtered = st.session_state.original_image.copy()
-    if "current_filter" in st.session_state and st.session_state.current_filter:
-        filtered = apply_filter(filtered, st.session_state.current_filter)
-    filtered = apply_adjustments(filtered, intensity, brightness, contrast)
-    st.session_state.filtered_image = filtered
 
 # Footer
 st.markdown("<footer style='text-align: center; color: white; margin-top: 40px;'>Made By Yashovardhan Pratap Singh</footer>", unsafe_allow_html=True)
