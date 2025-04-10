@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Filtering</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Image Filtering</h1>
+  <input type="file" id="upload" accept="image/*">
+  
+  <div class="canvas-container">
+    <div class="canvas-wrapper">
+      <h2>Original</h2>
+      <canvas id="originalCanvas"></canvas>
+    </div>
+    <div class="canvas-wrapper">
+      <h2>Filtered</h2>
+      <canvas id="filteredCanvas"></canvas>
+    </div>
+  </div>
+  
+  <div class="controls">
+    <button onclick="handleFilter('blur')">Blur</button>
+    <button onclick="handleFilter('sharpen')">Sharpen</button>
+    <button onclick="handleFilter('invert')">Invert</button>
+    <button onclick="handleFilter('smooth')">Smoothen</button>
+    <button onclick="handleFilter('grayscale')">Grayscale</button>
+    <button onclick="resetFiltered()">Reset Filter</button>
+    <button id="downloadBtn" onclick="downloadFiltered()">Download</button>
+  </div>
+  
+  <div class="sliders">
+    <div class="slider-container">
+      <label for="intensity">Intensity: <span id="intensityValue">1.0</span></label><br>
+      <input type="range" id="intensity" min="0" max="2" step="0.1" value="1">
+    </div>
+    <div class="slider-container">
+      <label for="brightness">Brightness: <span id="brightnessValue">0</span></label><br>
+      <input type="range" id="brightness" min="-100" max="100" step="1" value="0">
+    </div>
+    <div class="slider-container">
+      <label for="contrast">Contrast: <span id="contrastValue">1.0</span></label><br>
+      <input type="range" id="contrast" min="0" max="2" step="0.1" value="1">
+    </div>
+  </div>
+
+  <footer>Made By Yashovardhan Pratap Singh</footer>
+  
+  <script src="script.js"></script>
+</body>
+</html>
